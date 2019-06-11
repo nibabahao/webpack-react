@@ -122,8 +122,3 @@ module.exports = {
   devtool: 'inline-source-map' // 开发环境下定位到报错
 }
 
-// 还需要在主要的js文件里写入下面这段代码
-if (module.hot) {
-  // 实时热更新
-  module.hot.accept();
-}
