@@ -3,6 +3,37 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 let ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 let webpack = require('webpack')
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const argv = require('yargs-parser')(process.argv.slice(2));
+const pro = argv.mode === 'production' ? true : false; // 区分生产还是开发环境
+let plu = [];
+
+if (pro) {
+  // 线上
+  plu.push(
+    new HtmlWebpackPlugin({
+      // 模板入口 
+      template: './src/index.html',
+      hash: true, // 会在打包好的bundle.js后面加上hash
+      chunks: ['vendor', 'index' ,'utils'] // 模板对应的碎片位置
+    }),
+    // 拆分后会把css文件放到dist目录下的css/style.css
+    new ExtractTextWebpackPlugin('css/style.[chunkhash].css'),
+    new ExtractTextWebpackPlugin('css/reset.[chunkhash].css'),
+    new CleanWebpackPlugin(),
+  )
+} else {
+  plu.push(
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      chunks: ['vendor', 'index', 'utils']  //  引入需要的chunk
+    }),
+    // 拆分后会把css文件放到dist目录下的css/style.css
+    new ExtractTextWebpackPlugin('css/style.css'),
+    new ExtractTextWebpackPlugin('css/reset.css'),
+    new webpack.HotModuleReplacementPlugin(),  // 热更新，热更新不是刷新
+  )
+}
+
 
 module.exports = {
   entry: {
@@ -14,6 +45,13 @@ module.exports = {
   }, // 输出文件
   module:{ // 处理对应的模块
     rules: [
+        // {
+        //   enforce: "pre",  //  代表在解析loader之前就先解析eslint-loader
+        //   test: /\.js$/,
+        //   exclude: /node_modules/,
+        //   include:/src/,
+        //   loader: "eslint-loader",
+        // },
         {
             test: /\.(css|less)$/,
             use: ExtractTextWebpackPlugin.extract({
@@ -43,7 +81,7 @@ module.exports = {
           use: 'babel-loader',
           include: /src/, // 只转化src目录下的js
           exclude: /node_modules/ // 排除掉node_modules，优化打包速度
-        }
+        },
  /* Babel默认只转换新的JavaScript句法（syntax），而不转换新的API，比如Iterator、Generator、Set、Maps、Proxy、Reflect、Symbol、Promise等全局对象，以及一些定义在全局对象上的方法（比如Object.assign）都不会转码。
 举例来说，ES6在Array对象上新增了Array.from方法。Babel就不会转码这个方法。如果想让这个方法运行，必须使用babel-polyfill，为当前环境提供一个垫片
 
@@ -55,15 +93,9 @@ module.exports = {
     ]
   },
   plugins: [
-      new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin({
-          // 模板入口 
-          template: './src/index.html',
-          hash: true, // 会在打包好的bundle.js后面加上hash
-          chunks: ['vendor', 'index' ,'utils'] // 模板对应的碎片位置
-      }),
+      ...plu
       // 拆分后会把css文件放到dist目录下的css/style.css
-      new ExtractTextWebpackPlugin('css/style.css'),
+      // new ExtractTextWebpackPlugin('css/style.css'),
       // 通过postcss中的autoprefixer可以实现将CSS3中的一些需要兼容写法的属性添加响应的前缀，这样省去我们不少的时间由于新版本直接在package.json中添加
       //   "browserslist": [
       //     "defaults",
@@ -76,9 +108,6 @@ module.exports = {
              // 在转换 ES2015 语法为 ECMAScript 5 的语法时，babel 会需要一些辅助函数，例如 _extend。babel 默认会将这些辅助函数内联到每一个 js 文件里，这样文件多的时候，项目就会很大。
         // 所以 babel 提供了 transform-runtime 来将这些辅助函数“搬”到一个单独的模块 babel-runtime 中，这样做能减小项目文件的大小。
   ], // 对应的工具插件
-  devServer: { // 开发服务器配置
-
-  },
   // 在webpack4之前，提取公共代码都是通过一个叫CommonsChunkPlugin的插件来办到的。到了4以后，内置了一个一模一样的功能 optimization
   optimization: {
     splitChunks: {
@@ -119,6 +148,6 @@ module.exports = {
     hot: true, // 开启热更新
     overlay: true, // 浏览器上显示错误
   },
-  devtool: 'inline-source-map' // 开发环境下定位到报错
+  devtool: pro ? '' : 'inline-source-map' // 开发环境下定位到报错
 }
 
