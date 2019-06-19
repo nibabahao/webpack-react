@@ -37,7 +37,8 @@ if (pro) {
 
 module.exports = {
   entry: {
-    index: './src/index.js', // 入口文件，
+    // index: './src/index.js', // js入口文件，
+    index: './src/main.tsx'
   },
   output: {
     filename: 'bundle.js',
@@ -52,6 +53,15 @@ module.exports = {
         //   include:/src/,
         //   loader: "eslint-loader",
         // },
+        {
+          test: /\.tsx?$/,
+          loader: 'awesome-typescript-loader'
+        },
+        {
+          enforce: "pre", 
+          test: /\.js$/, 
+          loader: "source-map-loader" // 所有js文件会任何sourcemaps会被source-map-loader重新处理
+        },
         {
             test: /\.(css|less)$/,
             use: ExtractTextWebpackPlugin.extract({
@@ -92,6 +102,12 @@ module.exports = {
 
     ]
   },
+  // 首先webpack提供这个==externals==选项作用是==从打包的bundle文件中排除依赖==。
+  // 换句话说就是让在项目中通过import引入的依赖在打包的时候不会打包到bundle包中去，而是通过script的方式去访问这些依赖
+  // externals: {
+  //   "react": "React",
+  //   "react-dom": "ReactDOM"
+  // },
   plugins: [
       ...plu
       // 拆分后会把css文件放到dist目录下的css/style.css
@@ -139,7 +155,7 @@ module.exports = {
       static:path.join(__dirname, 'src/static')
     },
     // 省略后缀
-    extensions: ['.js', '.jsx', '.json', '.css', '.scss', '.less']
+    extensions: ['.js', '.jsx', '.json', '.css', '.scss', '.less', '.ts', '.tsx']
   },
   mode: 'development', // 模式配置
   devServer: {
@@ -148,6 +164,7 @@ module.exports = {
     hot: true, // 开启热更新
     overlay: true, // 浏览器上显示错误
   },
-  devtool: pro ? '' : 'inline-source-map' // 开发环境下定位到报错
+  // devtool: pro ? '' : 'inline-source-map' // 开发环境下定位到报错
+  devtool: 'source-map' // ts用source-map
 }
 

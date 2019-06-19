@@ -52,3 +52,13 @@ https://www.jianshu.com/p/91a4214b913b
 	 npm install -D lint-staged husky 
 	 package.json script添加
 	 "precommit": "npm run lint"
+
+#将Typescript与React和webpack结合
+  https://www.typescriptlang.org/docs/handbook/react-&-webpack.html
+	安装 npm install --save-dev typescript awesome-typescript-loader source-map-loader
+	source-map-loader 从typescript 内置通知到webpack去调试最后输出的地方
+
+	awesome-typescript-loader 注意这个不只是一个loader用于typescript，你可以用ts-loader代替，详细
+	https://github.com/s-panferov/awesome-typescript-loader#differences-between-ts-loader
+
+	添加typescript配置 创建tsconfig.json
