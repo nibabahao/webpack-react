@@ -55,7 +55,13 @@ module.exports = {
         // },
         {
           test: /\.tsx?$/,
-          loader: 'awesome-typescript-loader'
+          loader: 'awesome-typescript-loader',
+          options: {
+            useBabel: true,
+            babelOptions: {
+              babelrc: true
+            }
+          }
         },
         {
           enforce: "pre", 
@@ -87,7 +93,7 @@ module.exports = {
           use: 'file-loader'
         },
         {
-          test: /\.js$/,
+          test: /\.(js)$/,
           use: 'babel-loader',
           include: /src/, // 只转化src目录下的js
           exclude: /node_modules/ // 排除掉node_modules，优化打包速度
@@ -104,10 +110,10 @@ module.exports = {
   },
   // 首先webpack提供这个==externals==选项作用是==从打包的bundle文件中排除依赖==。
   // 换句话说就是让在项目中通过import引入的依赖在打包的时候不会打包到bundle包中去，而是通过script的方式去访问这些依赖
-  // externals: {
-  //   "react": "React",
-  //   "react-dom": "ReactDOM"
-  // },
+  externals: {
+    // "react": "React",
+    // "react-dom": "ReactDOM"
+  },
   plugins: [
       ...plu
       // 拆分后会把css文件放到dist目录下的css/style.css

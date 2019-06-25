@@ -5,7 +5,7 @@ babel 的核心功能包含在 @babel/core 模块中
 babel-preset-react
 Babel 能够转换 JSX 语法！查看 React preset 了解更多信息。通过和 babel-sublime 一起使用还可以把语法高亮的功能提升到一个新的水平。
 
-babel-prolyfill
+babel-polyfill
 @babel/polyfill 模块包括 core-js 和一个自定义的 regenerator runtime 模块用于模拟完整的 ES2015+ 环境。
 这意味着你可以使用诸如 Promise 和 WeakMap 之类的新的内置组件、 Array.from 或 Object.assign 之类的静态方法、 
 Babel默认只转换新的JavaScript句法（syntax），而不转换新的API，比如Iterator、Generator、Set、Maps、Proxy、Reflect、Symbol、Promise等全局对象，以及一些定义在全局对象上的方法（比如Object.assign）都不会转码。
